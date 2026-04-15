@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/invoice-final.json",
+  "title": "FinalInvoiceOutput",
+  "type": "object",
+  "required": [
+    "system_invoice_id",
+    "source_file_name",
+    "invoice_type",
+    "processing_status",
+    "clarity_score",
+    "ai_confidence_score",
+    "source_info",
+    "header_fields",
+    "items",
+    "full_ocr_text",
+    "validation_result"
+  ],
+  "properties": {
+    "system_invoice_id": { "type": "string" },
+    "source_file_name": { "type": "string" },
+    "invoice_type": { "type": "string" },
+    "processing_status": { "type": "string", "enum": ["AUTO_APPROVED", "APPROVED", "REJECTED", "PENDING_REVIEW", "DRAFT"] },
+    "clarity_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "ai_confidence_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "source_info": {
+      "type": "object",
+      "properties": {
+        "uploaded_by": { "type": "string" },
+        "upload_time": { "type": "string", "format": "date-time" },
+        "batch_name": { "type": ["string", "null"] },
+        "file_hash": { "type": "string" },
+        "storage_uri": { "type": "string" }
+      },
+      "required": ["uploaded_by", "upload_time", "file_hash", "storage_uri"]
+    },
+    "header_fields": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "confidence", "source"],
+        "properties": {
+          "value": {},
+          "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "source": { "type": "string", "enum": ["AI", "HUMAN"] }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "line_no": { "type": ["integer", "null"] },
+          "description": { "type": ["string", "null"] },
+          "qty": { "type": ["number", "null"] },
+          "unit_price": { "type": ["number", "null"] },
+          "amount": { "type": ["number", "null"] },
+          "confidence": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "full_ocr_text": { "type": "string" },
+    "validation_result": {
+      "type": "object",
+      "properties": {
+        "required_fields_complete": { "type": "boolean" },
+        "date_format_valid": { "type": "boolean" },
+        "amount_numeric_valid": { "type": "boolean" },
+        "currency_valid": { "type": "boolean" },
+        "item_total_match": { "type": ["boolean", "null"] },
+        "errors": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["required_fields_complete", "date_format_valid", "amount_numeric_valid", "currency_valid", "errors"]
+    }
+  }
+}

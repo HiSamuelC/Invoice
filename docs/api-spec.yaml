@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: AI Invoice Image Processing System API
+  version: 1.0.0
+servers:
+  - url: /api/v1
+tags:
+  - name: Auth
+  - name: Upload
+  - name: Invoices
+  - name: Review
+  - name: Settings
+  - name: UsersRoles
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: OK
+
+  /uploads/invoices:
+    post:
+      tags: [Upload]
+      summary: Batch upload invoice files
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [invoice_type_id, files]
+              properties:
+                invoice_type_id: { type: string, format: uuid }
+                batch_name: { type: string }
+                remarks: { type: string }
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201': { description: Created }
+
+  /invoices:
+    get:
+      tags: [Invoices]
+      summary: Search invoices
+      parameters:
+        - in: query
+          name: invoice_no
+          schema: { type: string }
+        - in: query
+          name: vendor_name
+          schema: { type: string }
+        - in: query
+          name: invoice_type_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: reviewer_id
+          schema: { type: string, format: uuid }
+        - in: query
+          name: batch_name
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: page_size
+          schema: { type: integer, default: 20 }
+      responses:
+        '200': { description: OK }
+
+  /invoices/{invoice_id}:
+    get:
+      tags: [Invoices]
+      summary: Get invoice detail
+      parameters:
+        - in: path
+          name: invoice_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: OK }
+
+  /review/queue:
+    get:
+      tags: [Review]
+      summary: Get pending review list
+      responses:
+        '200': { description: OK }
+
+  /review/{invoice_id}/save-draft:
+    post:
+      tags: [Review]
+      summary: Save draft changes
+      parameters:
+        - in: path
+          name: invoice_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                header_fields: { type: object }
+                items:
+                  type: array
+                  items: { type: object }
+      responses:
+        '200': { description: OK }
+
+  /review/{invoice_id}/approve:
+    post:
+      tags: [Review]
+      summary: Approve invoice
+      parameters:
+        - in: path
+          name: invoice_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Approved }
+
+  /review/{invoice_id}/reject:
+    post:
+      tags: [Review]
+      summary: Reject invoice
+      parameters:
+        - in: path
+          name: invoice_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string }
+      responses:
+        '200': { description: Rejected }
+
+  /review/{invoice_id}/rerun-ocr:
+    post:
+      tags: [Review]
+      summary: Re-run OCR pipeline
+      parameters:
+        - in: path
+          name: invoice_id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '202': { description: Accepted }
+
+  /settings/ai:
+    get:
+      tags: [Settings]
+      summary: Get AI provider settings
+      responses:
+        '200': { description: OK }
+    put:
+      tags: [Settings]
+      summary: Update AI provider settings
+      responses:
+        '200': { description: Updated }
+
+  /settings/prompts:
+    get:
+      tags: [Settings]
+      summary: List prompt templates
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Settings]
+      summary: Create prompt template
+      responses:
+        '201': { description: Created }
+
+  /settings/invoice-types:
+    get:
+      tags: [Settings]
+      summary: List invoice types
+      responses:
+        '200': { description: OK }
+
+  /admin/users:
+    get:
+      tags: [UsersRoles]
+      summary: List users
+      responses:
+        '200': { description: OK }
+
+  /admin/roles:
+    get:
+      tags: [UsersRoles]
+      summary: List roles & permissions
+      responses:
+        '200': { description: OK }
