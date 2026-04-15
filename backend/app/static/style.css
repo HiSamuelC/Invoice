@@ -1,0 +1,9 @@
+body { font-family: Arial, sans-serif; margin: 20px; color: #1f2937; }
+nav { margin-bottom: 16px; }
+nav a { margin-right: 8px; color: #2563eb; text-decoration: none; }
+.cards { display: flex; gap: 12px; }
+.card { background: #f3f4f6; padding: 12px; border-radius: 8px; min-width: 180px; }
+label { display: block; margin-top: 8px; font-weight: 700; }
+input, select, button { margin-top: 4px; margin-bottom: 8px; padding: 8px; width: 360px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.three-col section { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; min-height: 260px; }

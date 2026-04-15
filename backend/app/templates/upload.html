@@ -1,0 +1,18 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Upload</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<nav><a href="/">Dashboard</a> | <a href="/upload">Upload</a> | <a href="/search">Search</a> | <a href="/review">Manual Review</a> | <a href="/settings">Settings</a></nav>
+<h1>Upload Invoice</h1>
+<form action="/api/uploads/invoices" method="post" enctype="multipart/form-data">
+  <label>Invoice Type</label>
+  <select name="invoice_type_id" required>
+    {% for t in types %}
+      <option value="{{t.id}}">{{t.name}} ({{t.code}})</option>
+    {% endfor %}
+  </select>
+  <label>Batch Name</label><input name="batch_name" />
+  <label>Remarks</label><input name="remarks" />
+  <label>Files</label><input type="file" name="files" multiple required accept=".jpg,.jpeg,.png,.pdf" />
+  <button type="submit">Upload & Process</button>
+</form>
+</body></html>

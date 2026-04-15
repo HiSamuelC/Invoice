@@ -1,24 +1,30 @@
 # AI Invoice Image Processing System
 
-此專案提供「AI 發票影像處理系統」的完整可實作藍圖，包含：
+此 Repo 現在包含「可執行的 Web-based MVP」與先前的完整設計文件：
 
-- 可擴展前後端分離架構
-- PostgreSQL 資料表設計與 SQL DDL
-- REST API 規格（OpenAPI）
-- UI/UX 頁面與 Manual Review 三欄工作台設計
-- 狀態流轉與商業規則
-- 統一 JSON 輸出 Schema
-- AI Prompt Engine 設計
-- MVP 與 Phase 2 路線圖
+- `backend/`：FastAPI Web 系統（Dashboard / Upload / Search / Manual Review / Settings）
+- `db/schema.sql`：完整 PostgreSQL schema（生產建議）
+- `docs/`：架構、API、狀態流與 UX 規劃
 
-請依序閱讀：
+## 快速啟動（MVP Web）
 
-1. `docs/architecture.md`
-2. `docs/module-breakdown.md`
-3. `docs/frontend-structure.md`
-4. `docs/state-machine.md`
-5. `docs/prompts.md`
-6. `docs/api-spec.yaml`
-7. `db/schema.sql`
-8. `docs/output-json-schema.json`
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+開啟：`http://127.0.0.1:8000`
+
+## 已實作重點
+
+- 批量上傳檔案（含 SHA-256 去重）
+- 上傳需指定 invoice type
+- AI OCR provider 可插拔介面（預設 mock provider）
+- 自動判斷規則：clarity/confidence/required fields 三條件
+- 未達標進入 Pending Review
+- Manual Review 三欄式頁面（左清單／中預覽／右動態欄位區）
+- Save Draft / Approve / Reject / Re-run OCR API
+- 保存 AI Raw JSON + Final JSON
+- Audit Log 基礎記錄
 
